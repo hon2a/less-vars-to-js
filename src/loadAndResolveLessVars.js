@@ -39,15 +39,16 @@ function findLessVariables(lessCode) {
 const cssVarRegExp = /--([^:]+): ([^;]*);/g
 async function resolveLessVariables(lessCode, lessOptions) {
   const varNames = findLessVariables(lessCode)
-  const renderVarsCode = `#resolved {\n${varNames.map(varName => `--${varName}: @${varName};`).join('\n')}\n}`
   let renderResult
   try {
     renderResult = await less.render(
-      `${lessCode} ${renderVarsCode}`,
+      `${lessCode} #resolved {\n${varNames.map(varName => `--${varName}: @${varName};`).join('\n')}\n}`,
       lessOptions
     )
   } catch (e) {
-    throw new Error(`Less render failed! (${e.message}) Less code:\n${lessCode}\nGenerated code:\n${renderVarsCode}`)
+    throw new Error(
+      `Less render failed! (${e.message}) Less code:\n${lessCode}\nVariables found:\n${varNames.join(', ')}`
+    )
   }
   return getRegexpMatches(cssVarRegExp, renderResult.css.replace(/#resolved {(.*)}/, '$1')).reduce(
     (acc, [, varName, value]) => ({ ...acc, [camelCase(varName)]: value }),

@@ -49,6 +49,8 @@ const theme = await loadAndResolveLessVars('./src/style/variables.less')
 _Note: If you're using external imports (e.g. `import '~someLib/path/to/styles.less';`), this
 needs to run in the root folder of your package, so that it finds the libs at `./node_modules`._
 
+Pass Less parser options as a second argument to `loadAndResolveLessVars` if you need to customize them.
+
 ## Development
 
 ### Install
