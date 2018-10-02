@@ -24,7 +24,7 @@ function loadLessWithImports(entry) {
       resolved: loadLessWithImports(resolvedImportPath)
     }
   })
-  imports.reverse()
+  imports.reverse() // start replacing from the end not to mess up the match indices
   return imports.reduce(
     (acc, { match, resolved }) => acc.substring(0, match.index) + resolved + acc.substring(match[0].length),
     input

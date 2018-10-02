@@ -10,15 +10,44 @@ Install using
 npm install @hon2a/less-vars-to-js
 ```
 
-Use to load file and all its imports, resolve all variables, and collect them. E.g.:
+Use to load file and all its imports, resolve all variables, and collect them. E.g. the following
+setup:
+
+`<CWD>/node_modules/some-lib/dist/vars.less`
+```less
+@primary-color: green;
+@error-color: brickred; 
+```
+
+`src/style/theme.less`
+```less
+@import '~some-lib/dist/vars';
+@primary-color: blue;
+```
+
+`src/style/variables.less`
+```less
+@import './theme';
+@secondary-color: darken(@primary-color, 10);
+@match-rate-low-color: @error-color;
+```
+
+yields the following extraction:
 
 ```javascript
 import { loadAndResolveLessVars } from '@hon2a/less-vars-to-js'
-loadAndResolveLessVars('./src/style/variables.less')
+const theme = await loadAndResolveLessVars('./src/style/variables.less')
+/* {
+ *   primaryColor: 'blue',
+ *   errorColor: 'brickred',
+ *   secondaryColor: '#0000cc',
+ *   matchRateLowColor: 'brickred'
+ * }
+ */
 ```
 
-returns an object containing all variables declared in `src/style/variables.less` and its imports
-(with values resolved and variable names camel-cased).
+_Note: If you're using external imports (e.g. `import '~someLib/path/to/styles.less';`), this
+needs to run in the root folder of your package, so that it finds the libs at `./node_modules`._
 
 ## Development
 
