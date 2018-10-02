@@ -2,6 +2,7 @@
   "name": "@hon2a/less-vars-to-js",
   "version": "0.0.2",
   "description": "Parse a less variable list and its dependencies and return a map of all resolved variables",
+  "keywords": ["less", "javascript", "variables", "theme"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hon2a/less-vars-to-js"
