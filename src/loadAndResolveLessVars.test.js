@@ -1,21 +1,34 @@
 import { resolve } from 'path'
-import { ensureFileSync } from 'fs-extra'
+import { ensureFileSync, removeSync } from 'fs-extra'
 import { writeFileSync, existsSync } from 'fs'
 
-import { loadAndResolveLessVars } from './loadAndResolveLessVars'
+import { loadLessWithImports, loadAndResolveLessVars } from './loadAndResolveLessVars'
 
-const dummyExternalDependencyPath = resolve('./node_modules/dummy/variables.less')
+const dummyExternalDependencyFolder = resolve('./node_modules/dummy')
+const dummyExternalDependencyPath = resolve(dummyExternalDependencyFolder, 'variables.less')
+
+beforeAll(() => {
+  if (!existsSync(dummyExternalDependencyPath)) {
+    ensureFileSync(dummyExternalDependencyPath)
+    writeFileSync(dummyExternalDependencyPath, '@base-color: #00ff00;\n@light-color: lighten(@base-color, 10);', {
+      encoding: 'utf8'
+    })
+  }
+})
+
+afterAll(() => {
+  if (existsSync(dummyExternalDependencyFolder)) {
+    removeSync(dummyExternalDependencyFolder)
+  }
+})
+
+describe('loadLessWithImports', () => {
+  it('loads Less files, resolving all imports (transitively)', () => {
+    expect(loadLessWithImports('test/variables.less')).toMatchSnapshot()
+  })
+})
 
 describe('loadAndResolveLessVars', () => {
-  beforeAll(() => {
-    if (!existsSync(dummyExternalDependencyPath)) {
-      ensureFileSync(dummyExternalDependencyPath)
-      writeFileSync(dummyExternalDependencyPath, '@base-color: #00ff00;\n@light-color: lighten(@base-color, 10);', {
-        encoding: 'utf8'
-      })
-    }
-  })
-
   it('loads Less files, resolves imports, and resolves and collects variables', async () => {
     const output = await loadAndResolveLessVars('test/variables.less')
     expect(output).toEqual({

@@ -4,13 +4,14 @@ import { readFileSync } from 'fs'
 import { getRegexpMatches } from '@hon2a/get-regexp-matches'
 import camelCase from 'lodash.camelcase'
 
-const varNameRegExp = /@([\w-]+):/g
-const importRegExp = /@import ['"]([^'"]+)['"];/g
-const cssVarRegExp = /--([^:]+): ([^;]*);/g
-
 const root = resolve('./')
 
-function loadLessWithImports(entry) {
+function replaceSubstring(string, start, end, replacement) {
+  return string.substring(0, start) + replacement + string.substring(end)
+}
+
+const importRegExp = /^@import\s+['"]([^'"]+)['"];$/gm
+export function loadLessWithImports(entry) {
   const entryPath = resolve('./', entry)
   const input = readFileSync(entryPath, 'utf8')
   const imports = getRegexpMatches(importRegExp, input).map(match => {
@@ -24,25 +25,37 @@ function loadLessWithImports(entry) {
       resolved: loadLessWithImports(resolvedImportPath)
     }
   })
-  imports.reverse() // start replacing from the end not to mess up the match indices
-  return imports.reduce(
-    (acc, { match, resolved }) => acc.substring(0, match.index) + resolved + acc.substring(match[0].length),
+  return imports.reduceRight(
+    (acc, { match, resolved }) => replaceSubstring(acc, match.index, match.index + match[0].length, resolved),
     input
   )
 }
 
-async function resolveLessVariables(input) {
-  const varNames = getRegexpMatches(varNameRegExp, input).map(([, varName]) => varName)
-  const { css } = await less.render(
-    `${input} #resolved {\n${varNames.map(varName => `--${varName}: @${varName};`).join('\n')}\n}`
-  )
-  return getRegexpMatches(cssVarRegExp, css.replace(/#resolved {(.*)}/, '$1')).reduce(
+const varNameRegExp = /@([\w-]+):/g
+function findLessVariables(lessCode) {
+  return getRegexpMatches(varNameRegExp, lessCode).map(([, varName]) => varName)
+}
+
+const cssVarRegExp = /--([^:]+): ([^;]*);/g
+async function resolveLessVariables(lessCode, lessOptions) {
+  const varNames = findLessVariables(lessCode)
+  const renderVarsCode = `#resolved {\n${varNames.map(varName => `--${varName}: @${varName};`).join('\n')}\n}`
+  let renderResult
+  try {
+    renderResult = await less.render(
+      `${lessCode} ${renderVarsCode}`,
+      lessOptions
+    )
+  } catch (e) {
+    throw new Error(`Less render failed! (${e.message}) Less code:\n${lessCode}\nGenerated code:\n${renderVarsCode}`)
+  }
+  return getRegexpMatches(cssVarRegExp, renderResult.css.replace(/#resolved {(.*)}/, '$1')).reduce(
     (acc, [, varName, value]) => ({ ...acc, [camelCase(varName)]: value }),
     {}
   )
 }
 
-export async function loadAndResolveLessVars(entry) {
-  const input = loadLessWithImports(entry)
-  return await resolveLessVariables(input)
+export async function loadAndResolveLessVars(entry, lessOptions) {
+  const lessCode = loadLessWithImports(entry)
+  return await resolveLessVariables(lessCode, lessOptions)
 }
