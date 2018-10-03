@@ -38,10 +38,10 @@ yields the following extraction:
 import { loadAndResolveLessVars } from '@hon2a/less-vars-to-js'
 const theme = await loadAndResolveLessVars('./src/style/variables.less')
 /* {
- *   primaryColor: 'blue',
- *   errorColor: 'brickred',
- *   secondaryColor: '#0000cc',
- *   matchRateLowColor: 'brickred'
+ *   'primary-color': 'blue',
+ *   'error-color': 'brickred',
+ *   'secondary-color': '#0000cc',
+ *   'match-rate-color': 'brickred'
  * }
  */
 ```

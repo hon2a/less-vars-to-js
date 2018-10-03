@@ -2,7 +2,6 @@ import less from 'less'
 import { resolve, dirname } from 'path'
 import { readFileSync } from 'fs'
 import { getRegexpMatches } from '@hon2a/get-regexp-matches'
-import camelCase from 'lodash.camelcase'
 
 const root = resolve('./')
 
@@ -51,7 +50,7 @@ async function resolveLessVariables(lessCode, lessOptions) {
     )
   }
   return getRegexpMatches(cssVarRegExp, renderResult.css.replace(/#resolved {(.*)}/, '$1')).reduce(
-    (acc, [, varName, value]) => ({ ...acc, [camelCase(varName)]: value }),
+    (acc, [, varName, value]) => ({ ...acc, [varName]: value }),
     {}
   )
 }
