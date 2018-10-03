@@ -32,12 +32,12 @@ describe('loadAndResolveLessVars', () => {
   it('loads Less files, resolves imports, and resolves and collects variables', async () => {
     const output = await loadAndResolveLessVars('test/variables.less')
     expect(output).toEqual({
-      baseColor: '#00ff00', // from dummy lib (transitive external import)
-      lightColor: '#4dff4d', // original from from dummy lib overwritten locally, computed from imported variable
-      primaryColor: 'indigo', // from local import
-      darkColor: '#00cc00', // from local import, computed from transitively imported variable
-      secondaryColor: 'indigo', // from entry point, simple assignment from imported variable
-      errorColor: 'darkred' // from entry point
+      'base-color': '#00ff00', // from dummy lib (transitive external import)
+      'light-color': '#4dff4d', // original from from dummy lib overwritten locally, computed from imported variable
+      'primary-color': 'indigo', // from local import
+      'dark-color': '#00cc00', // from local import, computed from transitively imported variable
+      'secondary-color': 'indigo', // from entry point, simple assignment from imported variable
+      'error-color': 'darkred' // from entry point
     })
   })
 })
