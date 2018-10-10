@@ -10,7 +10,7 @@ const dummyExternalDependencyPath = resolve(dummyExternalDependencyFolder, 'vari
 beforeAll(() => {
   if (!existsSync(dummyExternalDependencyPath)) {
     ensureFileSync(dummyExternalDependencyPath)
-    writeFileSync(dummyExternalDependencyPath, '@base-color: #00ff00;\n@light-color: lighten(@base-color, 10);', {
+    writeFileSync(dummyExternalDependencyPath, '@base-color: #00ff00;\n@light-color  : lighten(@base-color, 10);', {
       encoding: 'utf8'
     })
   }

@@ -30,7 +30,7 @@ export function loadLessWithImports(entry) {
   )
 }
 
-const varNameRegExp = /@([\w-]+):/g
+const varNameRegExp = /^\s*@([\w-]+)\s*:/gm
 function findLessVariables(lessCode) {
   return getRegexpMatches(varNameRegExp, lessCode).map(([, varName]) => varName)
 }

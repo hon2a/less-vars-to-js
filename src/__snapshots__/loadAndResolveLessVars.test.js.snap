@@ -3,7 +3,7 @@
 exports[`loadLessWithImports loads Less files, resolving all imports (transitively) 1`] = `
 "// random comment to have import not on at the very start of the file
 @base-color: #00ff00;
-@light-color: lighten(@base-color, 10);
+@light-color  : lighten(@base-color, 10);
 
 @primary-color: indigo;
 @dark-color: darken(@base-color, 10);
