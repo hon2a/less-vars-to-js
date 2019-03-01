@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`loadLessWithImports loads Less files, resolving all imports (transitively) 1`] = `
+exports[`loadLessWithImports loads Less file and its imports (transitively), collects the imports 1`] = `
 "// random comment to have import not on at the very start of the file
 @base-color: #00ff00;
 @light-color  : lighten(@base-color, 10);

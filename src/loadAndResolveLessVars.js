@@ -21,13 +21,17 @@ export function loadLessWithImports(entry) {
       : resolve(dirname(entryPath), fullImportPath)
     return {
       match,
-      resolved: loadLessWithImports(resolvedImportPath)
+      path: resolvedImportPath,
+      ...loadLessWithImports(resolvedImportPath)
     }
   })
-  return imports.reduceRight(
-    (acc, { match, resolved }) => replaceSubstring(acc, match.index, match.index + match[0].length, resolved),
-    input
-  )
+  return {
+    code: imports.reduceRight(
+      (acc, { match, code }) => replaceSubstring(acc, match.index, match.index + match[0].length, code),
+      input
+    ),
+    imports: imports.reduce((acc, { path, imports: nestedImports }) => [...acc, ...nestedImports, path], [])
+  }
 }
 
 const varNameRegExp = /^\s*@([\w-]+)\s*:/gm
@@ -36,7 +40,7 @@ function findLessVariables(lessCode) {
 }
 
 const cssVarRegExp = /--([^:]+): ([^;]*);/g
-async function resolveLessVariables(lessCode, lessOptions) {
+export async function resolveLessVariables(lessCode, lessOptions) {
   const varNames = findLessVariables(lessCode)
   let renderResult
   try {
@@ -55,7 +59,14 @@ async function resolveLessVariables(lessCode, lessOptions) {
   )
 }
 
+/**
+ * Loads a Less file and all of its dependencies (transitively), compiles the Less code, and returns all variables
+ * found in the resolved code in an object.
+ * @param {String} entry path to the file
+ * @param {Object} lessOptions (optional)
+ * @returns {Promise<Object>}
+ */
 export async function loadAndResolveLessVars(entry, lessOptions) {
-  const lessCode = loadLessWithImports(entry)
+  const { code: lessCode } = loadLessWithImports(entry)
   return await resolveLessVariables(lessCode, lessOptions)
 }

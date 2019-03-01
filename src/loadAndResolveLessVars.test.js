@@ -23,8 +23,14 @@ afterAll(() => {
 })
 
 describe('loadLessWithImports', () => {
-  it('loads Less files, resolving all imports (transitively)', () => {
-    expect(loadLessWithImports('test/variables.less')).toMatchSnapshot()
+  it('loads Less file and its imports (transitively), collects the imports', () => {
+    const { code, imports } = loadLessWithImports('test/variables.less')
+    expect(code).toMatchSnapshot()
+    const basePath = resolve('./')
+    expect(imports.map(path => path.replace(basePath, ''))).toEqual([
+      '/node_modules/dummy/variables.less',
+      '/test/theme.less'
+    ])
   })
 })
 
