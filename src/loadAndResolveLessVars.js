@@ -2,8 +2,7 @@ import less from 'less'
 import { resolve, dirname } from 'path'
 import { readFileSync } from 'fs'
 import { getRegexpMatches } from '@hon2a/get-regexp-matches'
-
-const root = resolve('./')
+import enhancedResolve from "enhanced-resolve"
 
 function replaceSubstring(string, start, end, replacement) {
   return string.substring(0, start) + replacement + string.substring(end)
@@ -17,7 +16,7 @@ export function loadLessWithImports(entry) {
     const importPath = match[1]
     const fullImportPath = /\.less$/.test(importPath) ? importPath : `${importPath}.less`
     const resolvedImportPath = /^~/.test(importPath)
-      ? resolve(root, 'node_modules', fullImportPath.slice(1))
+      ? enhancedResolve.sync(__dirname, fullImportPath.slice(1))
       : resolve(dirname(entryPath), fullImportPath)
     return {
       match,
