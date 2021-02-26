@@ -11,7 +11,7 @@ beforeAll(() => {
   if (!existsSync(dummyExternalDependencyPath)) {
     ensureFileSync(dummyExternalDependencyPath)
     writeFileSync(dummyExternalDependencyPath, '@base-color: #00ff00;\n@light-color  : lighten(@base-color, 10);', {
-      encoding: 'utf8'
+      encoding: 'utf8',
     })
   }
 })
@@ -27,9 +27,9 @@ describe('loadLessWithImports', () => {
     const { code, imports } = loadLessWithImports('test/variables.less')
     expect(code).toMatchSnapshot()
     const basePath = resolve('./')
-    expect(imports.map(path => path.replace(basePath, ''))).toEqual([
+    expect(imports.map((path) => path.replace(basePath, ''))).toEqual([
       '/node_modules/dummy/variables.less',
-      '/test/theme.less'
+      '/test/theme.less',
     ])
   })
 })
@@ -43,7 +43,7 @@ describe('loadAndResolveLessVars', () => {
       'primary-color': 'indigo', // from local import
       'dark-color': '#00cc00', // from local import, computed from transitively imported variable
       'secondary-color': 'indigo', // from entry point, simple assignment from imported variable
-      'error-color': 'darkred' // from entry point
+      'error-color': 'darkred', // from entry point
     })
   })
 })
