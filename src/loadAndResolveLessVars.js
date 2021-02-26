@@ -13,7 +13,7 @@ const importRegExp = /^@import\s+['"]([^'"]+)['"];$/gm
 export function loadLessWithImports(entry) {
   const entryPath = resolve('./', entry)
   const input = readFileSync(entryPath, 'utf8')
-  const imports = getRegexpMatches(importRegExp, input).map(match => {
+  const imports = getRegexpMatches(importRegExp, input).map((match) => {
     const importPath = match[1]
     const fullImportPath = /\.less$/.test(importPath) ? importPath : `${importPath}.less`
     const resolvedImportPath = /^~/.test(importPath)
@@ -22,7 +22,7 @@ export function loadLessWithImports(entry) {
     return {
       match,
       path: resolvedImportPath,
-      ...loadLessWithImports(resolvedImportPath)
+      ...loadLessWithImports(resolvedImportPath),
     }
   })
   return {
@@ -30,7 +30,7 @@ export function loadLessWithImports(entry) {
       (acc, { match, code }) => replaceSubstring(acc, match.index, match.index + match[0].length, code),
       input
     ),
-    imports: imports.reduce((acc, { path, imports: nestedImports }) => [...acc, ...nestedImports, path], [])
+    imports: imports.reduce((acc, { path, imports: nestedImports }) => [...acc, ...nestedImports, path], []),
   }
 }
 
@@ -45,7 +45,7 @@ export async function resolveLessVariables(lessCode, lessOptions) {
   let renderResult
   try {
     renderResult = await less.render(
-      `${lessCode} #resolved {\n${varNames.map(varName => `--${varName}: @${varName};`).join('\n')}\n}`,
+      `${lessCode} #resolved {\n${varNames.map((varName) => `--${varName}: @${varName};`).join('\n')}\n}`,
       lessOptions
     )
   } catch (e) {
