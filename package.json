@@ -33,17 +33,17 @@
     "@wisersolutions/transpile-js": "^0.0.18",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
-    "eslint": "^7.20.0",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-jest": "^24.1.5",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jest": "^24.3.6",
     "jest": "^26.6.3",
     "less": "^4.1.1",
-    "prettier": "^2.2.1"
+    "prettier": "^2.3.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.13.7",
+    "@babel/runtime": "^7.14.0",
     "@hon2a/get-regexp-matches": "^0.0.7",
-    "fs-extra": "^9.1.0"
+    "fs-extra": "^10.0.0"
   },
   "peerDependencies": {
     "less": ">=4.1"
